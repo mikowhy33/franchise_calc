@@ -302,7 +302,7 @@ export default function MainnnPage() {
 						<CardHeader>Basic Data</CardHeader>
 
 						<h2>Teacher cost Calculation</h2>
-						<div className="bg-gray-900 space-y-3 p-5 rounded-2xl">
+						<div className="bg-gray-300 dark:bg-gray-900 space-y-3 p-5 rounded-2xl">
 							<p>Avg Salary Assumption</p>
 							<Input
 								type="text"
@@ -337,7 +337,7 @@ export default function MainnnPage() {
 									<div key={month}>
 										<h2>Month: {month}</h2>
 
-										<div className="grid grid-cols-2 gap-2 text-xs border border-amber-50 p-3 rounded-2xl items-center">
+										<div className="grid grid-cols-2 gap-2 text-xs border border-black dark:border-amber-50 p-3 rounded-2xl items-center">
 											<p>Nr of Teachers</p>
 											<Input
 												type="text"
@@ -466,7 +466,7 @@ export default function MainnnPage() {
 									<div key={month}>
 										<h2>Month: {month}</h2>
 
-										<div className="grid grid-cols-2 gap-2 p-3 text-xs items-center border border-amber-50 rounded-2xl ">
+										<div className="grid grid-cols-2 gap-2 p-3 text-xs items-center border border-black dark:border-amber-50 rounded-2xl ">
 											<p>Student Licenses</p>
 											<Input
 												type="text"
