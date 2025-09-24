@@ -29,13 +29,13 @@ export default function MainnnPage() {
 	const { setTheme } = useTheme();
 
 	// months as literals and their type, months is now a typle with these exact types
-	const months = ["September", "October", "November","December"] as const;
+	const months = ["September", "October", "November", "December"] as const;
 
 	const nr: Record<Month, number> = {
 		September: 0,
 		October: 1,
 		November: 2,
-		December:3
+		December: 3,
 	};
 
 	// reverse of nr, no longer in use but nice trick
@@ -191,9 +191,10 @@ export default function MainnnPage() {
 	const [avgsalaryassumption, setavgsalaryassumption] = useState(0);
 	const [workingdays, setworkingdays] = useState(0);
 
-	const TeacherCostPerDay: number = workingdays>0? Number(
-		(avgsalaryassumption / workingdays).toFixed(1)
-	):0;
+	const TeacherCostPerDay: number =
+		workingdays > 0
+			? Number((avgsalaryassumption / workingdays).toFixed(1))
+			: 0;
 
 	console.log(monthlyData);
 
@@ -216,17 +217,16 @@ export default function MainnnPage() {
 	const getAllCosts = (month: Month) => {
 		const data = monthlyData[month];
 
-		const costs=Number(
+		const costs = Number(
 			data.studLicenses +
 				getTeacherCostPIE(month) +
 				getTeacherCostPEL(month) +
 				data.transportCostPIE +
 				data.transportCostPEL +
 				data.childSafetyCert
-		)
+		);
 
-		
-		return Number.isNaN(costs)?0:costs
+		return Number.isNaN(costs) ? 0 : costs;
 	};
 
 	console.log(getTeacherCostPIE("September"));
@@ -470,11 +470,7 @@ export default function MainnnPage() {
 											<p>Student Licenses</p>
 											<Input
 												type="text"
-												value={
-													monthlyData[month].studLicenses == 0
-														? ""
-														: monthlyData[month].studLicenses
-												}
+												value={monthlyData[month].studLicenses}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -509,9 +505,7 @@ export default function MainnnPage() {
 											<Input
 												type="text"
 												value={
-													monthlyData[month].transportCostPIE == 0
-														? ""
-														: monthlyData[month].transportCostPIE
+													 monthlyData[month].transportCostPIE
 												}
 												onChange={(e) => {
 													updateMonthlyData(
@@ -525,9 +519,7 @@ export default function MainnnPage() {
 											<Input
 												type="text"
 												value={
-													monthlyData[month].transportCostPEL == 0
-														? ""
-														: monthlyData[month].transportCostPEL
+													monthlyData[month].transportCostPEL
 												}
 												onChange={(e) => {
 													updateMonthlyData(
@@ -541,9 +533,7 @@ export default function MainnnPage() {
 											<Input
 												type="text"
 												value={
-													monthlyData[month].childSafetyCert == 0
-														? ""
-														: monthlyData[month].childSafetyCert
+													 monthlyData[month].childSafetyCert
 												}
 												onChange={(e) => {
 													updateMonthlyData(
@@ -567,9 +557,13 @@ export default function MainnnPage() {
 								<table className="w-full text-sm  border-collapse">
 									<thead>
 										<tr className="border-b">
-											<th className="text-left p-2 font-bold">Metric / Month</th>
+											<th className="text-left p-2 font-bold">
+												Metric / Month
+											</th>
 											{months.map((month) => (
-												<th key={month} className="text-center p-2 font-bold">{month}</th>
+												<th key={month} className="text-center p-2 font-bold">
+													{month}
+												</th>
 											))}
 										</tr>
 									</thead>
@@ -581,7 +575,9 @@ export default function MainnnPage() {
 											</td>
 
 											{months.map((month, index) => (
-												<td key={index} className="text-center p-2">{getMonthlyRevenuePIE(month)}</td>
+												<td key={index} className="text-center p-2">
+													{getMonthlyRevenuePIE(month)}
+												</td>
 											))}
 										</tr>
 
@@ -591,39 +587,55 @@ export default function MainnnPage() {
 											</td>
 
 											{months.map((month, index) => (
-												<td key={index}  className="text-center p-2">{getMonthlyRevenuePEL(month)}</td>
+												<td key={index} className="text-center p-2">
+													{getMonthlyRevenuePEL(month)}
+												</td>
 											))}
 										</tr>
 
 										<tr className="border-b bg-green-50 dark:bg-green-900/20">
-											<td className="p-2 font-medium text-left">TOTAL Revenue</td>
+											<td className="p-2 font-medium text-left">
+												TOTAL Revenue
+											</td>
 
 											{months.map((month, index) => (
-												<td key={month}  className="text-center p-2">{getTotalMonthlyRevenue(month)}</td>
+												<td key={month} className="text-center p-2">
+													{getTotalMonthlyRevenue(month)}
+												</td>
 											))}
 										</tr>
 
 										<tr className="border-b bg-red-50 dark:bg-red-900/20">
-											<td className="p-2 font-medium text-left">Monthly TOTAL Costs</td>
+											<td className="p-2 font-medium text-left">
+												Monthly TOTAL Costs
+											</td>
 
 											{months.map((month, index) => (
-												<td key={month}  className="text-center p-2">{getAllCosts(month)}</td>
+												<td key={month} className="text-center p-2">
+													{getAllCosts(month)}
+												</td>
 											))}
 										</tr>
 
 										<tr className="border-b bg-red-50 dark:bg-red-900/20">
-											<td className="p-2 font-medium text-left">Monthly Profit/Lost</td>
+											<td className="p-2 font-medium text-left">
+												Monthly Profit/Lost
+											</td>
 
 											{months.map((month, index) => (
-												<td key={month}  className="text-center p-2">{monthlyProfit_Loss(month)}</td>
+												<td key={month} className="text-center p-2">
+													{monthlyProfit_Loss(month)}
+												</td>
 											))}
 										</tr>
 
 										<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
-											<td className="p-2 font-medium text-left">Monthly Profitability % </td>
+											<td className="p-2 font-medium text-left">
+												Monthly Profitability %{" "}
+											</td>
 
 											{months.map((month, index) => (
-												<td key={month}  className="text-center p-2">
+												<td key={month} className="text-center p-2">
 													{getTotalMonthlyRevenue(month) === 0
 														? "0%"
 														: (
@@ -635,11 +647,13 @@ export default function MainnnPage() {
 											))}
 										</tr>
 
-										<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20" >
+										<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
 											<td className="p-2 font-medium text-left"> Cashflow </td>
 
 											{months.map((month, index) => (
-												<td key={month}  className="text-center p-2">{cashFlow(month)}</td>
+												<td key={month} className="text-center p-2">
+													{cashFlow(month)}
+												</td>
 											))}
 										</tr>
 									</tbody>
@@ -708,8 +722,6 @@ export default function MainnnPage() {
 										</div>
 									</div>
 								</div>
-
-								
 							</div>
 						</CardContent>
 					</Card>
