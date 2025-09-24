@@ -46,8 +46,8 @@ export default function MainnnPage() {
 		ratePerStudPerMeetingPIE: number;
 		ratePerStudPerMeetingPEL: number;
 		studLicenses: number;
-		teacherCostPIE: number;
-		teacherCostPEL: number;
+		//teacherCostPIE: number;
+		//teacherCostPEL: number;
 		transportCostPIE: number;
 		transportCostPEL: number;
 		childSafetyCert: number;
@@ -70,9 +70,9 @@ export default function MainnnPage() {
 			ratePerStudPerMeetingPEL: 0,
 			// Costs
 			studLicenses: 0,
-			teacherCostPIE: 0,
-			teacherCostPEL: 0,
+			//teacherCostPIE: 0,
 			transportCostPIE: 0,
+			//teacherCostPEL: 0,
 			transportCostPEL: 0,
 			childSafetyCert: 0,
 		},
@@ -86,8 +86,8 @@ export default function MainnnPage() {
 			ratePerStudPerMeetingPEL: 0,
 			// Costs
 			studLicenses: 0,
-			teacherCostPIE: 0,
-			teacherCostPEL: 0,
+			//teacherCostPIE: 0,
+			//teacherCostPEL: 0,
 			transportCostPIE: 0,
 			transportCostPEL: 0,
 			childSafetyCert: 0,
@@ -102,8 +102,9 @@ export default function MainnnPage() {
 			ratePerStudPerMeetingPEL: 0,
 			// Costs
 			studLicenses: 0,
-			teacherCostPIE: 0,
-			teacherCostPEL: 0,
+			// taking the costs out, now they are a result of a function
+			//teacherCostPIE: 0,
+			//teacherCostPEL: 0,
 			transportCostPIE: 0,
 			transportCostPEL: 0,
 			childSafetyCert: 0,
@@ -173,20 +174,26 @@ export default function MainnnPage() {
 	
 	const getTeacherCostPIE=(month:Month)=>{
 		const data=monthlyData[month];
-		return (TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPIE).toFixed(0);
+		return (Math.round(TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPIE));
 	}
 
 	const getTeacherCostPEL=(month:Month)=>{
 		const data=monthlyData[month];
-		return(TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPEL).toFixed(0);
+		return(Math.round(TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPEL));
 	}
 
 	// sum of total costs
 
 	const getAllCosts=(month:Month)=>{
 		const data=monthlyData[month];
-		return(Number(data.studLicenses+data.teacherCostPIE+data.teacherCostPEL+data.transportCostPIE+data.transportCostPEL+data.childSafetyCert))
+		
+		return(Number(data.studLicenses+getTeacherCostPIE(month)+getTeacherCostPEL(month)+data.transportCostPIE+data.transportCostPEL+data.childSafetyCert))
+
 	}
+
+
+	
+	
 
 	
 	return (
@@ -377,22 +384,26 @@ export default function MainnnPage() {
 												type="number"
                                                 // value={monthlyData[month].teacherCostPIE==0?"":monthlyData[month].teacherCostPIE}
 
-												value={Number.isNaN(getTeacherCostPIE(month)) ? "" : getTeacherCostPIE(month)}
+												value={getTeacherCostPIE(month)}
 												
-												onChange={(e) => {
-													updateMonthlyData(month,"teacherCostPIE",Number(e.target.value))
-												}}></Input>
+												// onChange={(e) => {
+												// 	updateMonthlyData(month,"teacherCostPIE",Number(e.target.value))
+												// }}
+												readOnly
+												></Input>
 
 											<p>Teacher Cost PEL</p>
 											<Input
 												type="number"
                                                 // value={monthlyData[month].teacherCostPEL==0?"":monthlyData[month].teacherCostPEL}
 
-												value={Number.isNaN(getTeacherCostPEL(month)) ? "" : getTeacherCostPEL(month)}
+												value={getTeacherCostPEL(month)}
 
-												onChange={(e) => {
-													updateMonthlyData(month,"teacherCostPEL", Number(e.target.value))
-												}}></Input>
+												// onChange={(e) => {
+												// 	updateMonthlyData(month,"teacherCostPEL", Number(e.target.value))
+												// }}
+												readOnly
+												></Input>
 
 											<p>Transport Cost PIE</p>
 											<Input
@@ -408,7 +419,8 @@ export default function MainnnPage() {
                                                 value={monthlyData[month].transportCostPEL==0?"":monthlyData[month].transportCostPEL}
 												onChange={(e) => {
 													updateMonthlyData(month,"transportCostPEL",Number(e.target.value))
-												}}></Input>
+												}}
+												></Input>
 
 											<p>Child Safety Certifications</p>
 											<Input
