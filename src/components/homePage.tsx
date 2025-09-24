@@ -23,20 +23,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
+import { get } from "http";
 
 export default function MainnnPage() {
 	const { setTheme } = useTheme();
 
-	//Monthly Info
-
-	// Monthly Costs
-
-	const [studLicenses, setStudLicenses] = useState(0);
-	const [teacherCostPIE, setTeacherCostPIE] = useState(0);
-	const [teacherCostPEL, setTeacherCostPEL] = useState(0);
-	const [transportCostPIE, setTransportCostPIE] = useState(0);
-	const [transportCostPEL, setTransportCostPEL] = useState(0);
-	const [childSafetyCert, setChildSafetyCert] = useState(0);
+	
 
 	// months as literals and their type, months is now a typle with these exact types
 	const months = ["September", "October", "November"] as const;
@@ -128,12 +120,15 @@ export default function MainnnPage() {
 		// when we give function to a set attribute in setstate hook we can take previous values
 		setMonthlyData((prev) => ({
 			// all the data inside is taken, were doing a copy
+            // prev HAS A MONTHLYDATA TYPE!
 			...prev,
 			// we take our specific month
 			// dynamic key if month is september we will edit a september
 			[month]: {
 				// in our specific month we take all the previous data
 				// we take data from exact month, also making sure the month is one of keys from the prev value
+
+                // keyof typeof prev=== keyof MonthlyData
 				...prev[month as keyof typeof prev],
 				// and we change the value, fiel we have given
 				[field]: Number(value) || 0,
@@ -141,22 +136,59 @@ export default function MainnnPage() {
 		}));
 	};
 
+	
 	const getMonthlyRevenuePIE = (month: Month) => {
 		const data = monthlyData[month];
 		return (
 			data.nrOfStudPIE * data.nrOfMeetingsPIE * data.ratePerStudPerMeetingPIE
 		);
-	};
 
+
+	};
+	const getMonthlyRevenuePEL=(month:Month)=>{
+		const data=monthlyData[month];
+
+		return(
+			data.nrOfMeetingsPEL*data.nrOfStudPEL*data.ratePerStudPerMeetingPEL
+		)
+	}
+	const getTotalMonthlyRevenue=(month:Month)=>{
+		return(getMonthlyRevenuePIE(month) + getMonthlyRevenuePEL(month));
+	}
+
+
+
+	// costs
+	
+	
+	
 	const [avgsalaryassumption, setavgsalaryassumption] = useState(0);
 	const [workingdays, setworkingdays] = useState(0);
-
+	
 	const TeacherCostPerDay: number = Number(
 		(avgsalaryassumption / workingdays).toFixed(1)
 	);
-
+	
 	console.log(monthlyData);
+	
+	const getTeacherCostPIE=(month:Month)=>{
+		const data=monthlyData[month];
+		return (TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPIE).toFixed(0);
+	}
 
+	const getTeacherCostPEL=(month:Month)=>{
+		const data=monthlyData[month];
+		return(TeacherCostPerDay*data.nrOfTeachers*data.nrOfMeetingsPEL).toFixed(0);
+	}
+
+	// sum of total costs
+
+	const getAllCosts=(month:Month)=>{
+		const data=monthlyData[month];
+		return(Number(data.studLicenses+data.teacherCostPIE+data.teacherCostPEL+data.transportCostPIE+data.transportCostPEL+data.childSafetyCert))
+	}
+
+	
 	return (
 		<main className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 p-4 ">
 			<DropdownMenu>
@@ -196,7 +228,7 @@ export default function MainnnPage() {
 									setavgsalaryassumption(Number(e.target.value));
 								}}></Input>
 
-							<p>Working Days (21)</p>
+							<p>Working Days</p>
 							<Input
 								type="number"
 								onChange={(e) => {
@@ -224,11 +256,24 @@ export default function MainnnPage() {
 										<h2>Month: {month}</h2>
 
 										<div className="grid grid-cols-2 gap-2 text-xs border border-amber-50 p-3 rounded-2xl items-center">
+
+											<p>Nr of Teachers</p>
+											<Input
+												type="number"
+												value={monthlyData[month].nrOfTeachers ==0 ? "" : monthlyData[month].nrOfTeachers}
+												onChange={(e) => {
+													updateMonthlyData(
+														month,
+														"nrOfTeachers",
+														e.target.value
+													);
+												}}></Input>
+
 											<p>Nr of Students PIE</p>
 											<Input
 												type="number"
 												// value from our months data, always synchronised
-												value={monthlyData[month].nrOfStudPIE}
+												value={monthlyData[month].nrOfStudPIE==0 ? "" : monthlyData[month].nrOfStudPIE}
 												onChange={(e) =>
 													updateMonthlyData(
 														month,
@@ -240,7 +285,7 @@ export default function MainnnPage() {
 											<p>Nr of Students PEL</p>
 											<Input
 												type="number"
-												value={monthlyData[month].nrOfStudPEL}
+												value={monthlyData[month].nrOfStudPEL ==0 ? "" : monthlyData[month].nrOfStudPEL}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -249,22 +294,12 @@ export default function MainnnPage() {
 													);
 												}}></Input>
 
-											<p>Nr of Teachers</p>
-											<Input
-												type="number"
-												value={monthlyData[month].nrOfTeachers}
-												onChange={(e) => {
-													updateMonthlyData(
-														month,
-														"nrOfTeachers",
-														e.target.value
-													);
-												}}></Input>
+											
 
 											<p>Nr of Meetings PIE</p>
 											<Input
 												type="number"
-												value={monthlyData[month].nrOfMeetingsPIE}
+												value={monthlyData[month].nrOfMeetingsPIE ==0 ? "" : monthlyData[month].nrOfMeetingsPIE}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -276,7 +311,7 @@ export default function MainnnPage() {
 											<p>Nr of Meeting PEL</p>
 											<Input
 												type="number"
-												value={monthlyData[month].nrOfMeetingsPEL}
+												value={monthlyData[month].nrOfMeetingsPEL==0 ? "" : monthlyData[month].nrOfMeetingsPEL}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -288,7 +323,7 @@ export default function MainnnPage() {
 											<p>Rate per Student per Meeting PIE</p>
 											<Input
 												type="number"
-												value={monthlyData[month].ratePerStudPerMeetingPIE}
+												value={monthlyData[month].ratePerStudPerMeetingPIE==0 ? "" : monthlyData[month].ratePerStudPerMeetingPIE}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -300,7 +335,7 @@ export default function MainnnPage() {
 											<p>Rate per Student per Meeting PEL</p>
 											<Input
 												type="number"
-												value={monthlyData[month].ratePerStudPerMeetingPEL}
+												value={monthlyData[month].ratePerStudPerMeetingPEL==0?"":monthlyData[month].ratePerStudPerMeetingPEL}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -328,7 +363,7 @@ export default function MainnnPage() {
 											<p>Student Licenses</p>
 											<Input
 												type="number"
-                                                value={monthlyData[month].studLicenses}
+                                                value={monthlyData[month].studLicenses==0?"":monthlyData[month].studLicenses}
 												onChange={(e) => {
 													updateMonthlyData(
 														month,
@@ -340,7 +375,10 @@ export default function MainnnPage() {
 											<p>Teacher Cost PIE</p>
 											<Input
 												type="number"
-                                                value={monthlyData[month].teacherCostPIE}
+                                                // value={monthlyData[month].teacherCostPIE==0?"":monthlyData[month].teacherCostPIE}
+
+												value={Number.isNaN(getTeacherCostPIE(month)) ? "" : getTeacherCostPIE(month)}
+												
 												onChange={(e) => {
 													updateMonthlyData(month,"teacherCostPIE",Number(e.target.value))
 												}}></Input>
@@ -348,7 +386,10 @@ export default function MainnnPage() {
 											<p>Teacher Cost PEL</p>
 											<Input
 												type="number"
-                                                value={monthlyData[month].teacherCostPEL}
+                                                // value={monthlyData[month].teacherCostPEL==0?"":monthlyData[month].teacherCostPEL}
+
+												value={Number.isNaN(getTeacherCostPEL(month)) ? "" : getTeacherCostPEL(month)}
+
 												onChange={(e) => {
 													updateMonthlyData(month,"teacherCostPEL", Number(e.target.value))
 												}}></Input>
@@ -356,7 +397,7 @@ export default function MainnnPage() {
 											<p>Transport Cost PIE</p>
 											<Input
 												type="number"
-                                                value={monthlyData[month].transportCostPIE}
+                                                value={monthlyData[month].transportCostPIE==0?"":monthlyData[month].transportCostPIE}
 												onChange={(e) => {
 													updateMonthlyData(month,"transportCostPIE",Number(e.target.value))
 												}}></Input>
@@ -364,7 +405,7 @@ export default function MainnnPage() {
 											<p>Transport Cost PEL</p>
 											<Input
 												type="number"
-                                                value={monthlyData[month].transportCostPEL}
+                                                value={monthlyData[month].transportCostPEL==0?"":monthlyData[month].transportCostPEL}
 												onChange={(e) => {
 													updateMonthlyData(month,"transportCostPEL",Number(e.target.value))
 												}}></Input>
@@ -383,11 +424,11 @@ export default function MainnnPage() {
 						</CardContent>
 					</Card>
 
-					<Card>
+					<Card className="w-screen">
 						<CardHeader>Calculations output</CardHeader>
 
 						<CardContent>
-							<div className="overflow-x-auto">
+							<div className="overflow-x-auto ">
 								<table className="w-full text-sm">
 									<thead>
 										<tr>
@@ -404,10 +445,44 @@ export default function MainnnPage() {
 												Monthly Revenue PIE
 											</td>
 
-											{months.map((motnh, index) => (
-												<td key={index}>{}</td>
+											{months.map((month, index) => (
+												<td key={index}>{getMonthlyRevenuePIE(month)}</td>
 											))}
 										</tr>
+
+										<tr>
+											<td className="p-2 font-medium text-left">Monthly Revenue PEL</td>
+
+											{months.map((month,index)=>(
+												<td key={index}>{getMonthlyRevenuePEL(month)}</td>
+											))}
+										</tr>
+
+										<tr>
+
+											<td>TOTAL Revenue</td>
+
+											{months.map((month,index)=>(
+												<td key={month}>
+													{getTotalMonthlyRevenue(month)}
+												</td>
+											))}
+
+										</tr>
+
+										<tr>
+
+											<td>Monthly TOTAL Costs</td>
+
+											{months.map((month,index)=>(
+												<td key={month}>
+													{getAllCosts(month)}
+												</td>
+											))}
+
+
+										</tr>
+
 									</tbody>
 								</table>
 							</div>
