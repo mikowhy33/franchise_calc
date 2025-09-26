@@ -588,13 +588,14 @@ export default function MainnnPage() {
 
 				{/* what is inside the Card will be vertically due to flex, card takes full width of the column but not more than sm~24rem */}
 				{/* BEZ MAX-W-SM TA KARTA WEZMIE CALA SZEROKOSC DIVA ALE TYLKO JEDNA KOLUMNE BO JEST GRID KTORY DZIELI DIVA NA 3 ROWNE CZESCI, OZNACZA TO TYLE, ZE PO PROSTU WEZMIE FULL SZEROKOSCI GRIDA. BEZ TEGO WZIELABY CALA SZEROKOSC DIVA CZYLI RODZICA! */}
-				<Card className=" flex flex-col  p-10  w-full max-w-sm">
+				<Card className=" flex flex-col  p-10  w-full ">
 					<CardHeader>Basic Data</CardHeader>
 
 					<h2>Teacher cost Calculation</h2>
 					<div className="bg-gray-300 dark:bg-gray-900 space-y-3 p-5 rounded-2xl">
 						<p>Avg Salary Assumption</p>
 						<Input
+					
 							type="text"
 							onChange={(e) => {
 								setavgsalaryassumption(Number(e.target.value));
@@ -602,6 +603,7 @@ export default function MainnnPage() {
 
 						<p>Working Days</p>
 						<Input
+						className="border border-black dark:border-white "
 							type="text"
 							onChange={(e) => {
 								setworkingdays(Number(e.target.value));
@@ -618,7 +620,7 @@ export default function MainnnPage() {
 				</Card>
 
 				{/* Middle column, here card takes also a full width but not more than md */}
-				<Card className="flex flex-col  p-10 w-full max-w-md">
+				<Card className="flex flex-col  p-10 w-full ">
 					<CardHeader>Monthly info</CardHeader>
 
 					<CardContent>
