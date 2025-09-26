@@ -622,10 +622,10 @@ export default function MainnnPage() {
 					<CardHeader>Monthly info</CardHeader>
 
 					<CardContent>
-						<div className=" space-y-3 ">
+						<div className=" space-y-5 ">
 							{months.map((month, index) => (
 								<div key={month}>
-									<h2>Month: {month}</h2>
+									<h2 className="text-center mb-1">Month: {month}</h2>
 
 									{/* robi dwie kolumny dla par label input  items-center wyrownuje elementu pionowo do srodka*/}
 									<div className="grid grid-cols-2 gap-2 text-xs border border-black dark:border-amber-50 p-3 rounded-2xl items-center">
@@ -703,10 +703,10 @@ export default function MainnnPage() {
 					<CardHeader>Costs</CardHeader>
 
 					<CardContent>
-						<div className=" space-y-3 ">
+						<div className=" space-y-5 ">
 							{months.map((month, index) => (
 								<div key={month}>
-									<h2>Month: {month}</h2>
+									<h2 className="text-center mb-1">Month: {month}</h2>
 
 									<div className="grid grid-cols-2 gap-2 p-3 text-xs items-center border border-black dark:border-amber-50 rounded-2xl ">
 										<p>Student Licenses</p>
