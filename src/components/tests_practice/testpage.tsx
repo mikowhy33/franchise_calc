@@ -9,7 +9,7 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
@@ -658,36 +658,6 @@ export default function MainnnPage() {
 								updateMonthlyDataV3("ratePerStudPerMeeting", e.target.value);
 							}}></Input>
 					</div>
-
-					<h2>These inputs are one time costs </h2>
-					<div className="space-y-3">
-						<p>Student Licenses</p>
-						<Input
-							type="text"
-							// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
-							value={monthlyData[firstMonth].studLicenses}
-							onChange={(e) => {
-								updateMonthlyData(
-									firstMonth,
-									"studLicenses",
-									Number(e.target.value)
-								);
-							}}></Input>
-
-						<p>Child Safety Certifications</p>
-						<Input
-							type="text"
-							// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
-							value={monthlyData[firstMonth].childSafetyCert}
-							onChange={(e) => {
-								updateMonthlyData(
-									firstMonth,
-									"childSafetyCert",
-									Number(e.target.value)
-								);
-							}}
-							></Input>
-					</div>
 				</Card>
 
 				{/* Middle column, here card takes also a full width but not more than md */}
@@ -702,6 +672,36 @@ export default function MainnnPage() {
 
 									{/* robi dwie kolumny dla par label input  items-center wyrownuje elementu pionowo do srodka*/}
 									<div className="grid grid-cols-2 gap-2 text-xs border border-black dark:border-amber-50 p-3 rounded-2xl items-center">
+										<p>Nr of Teachers</p>
+										<Input
+											type="text"
+											value={
+												// jesli nie damy tego zabezpieczenia stan bedzie powracal za kazdym razem do pustego "", wtedy nie mozemy doklejac wartosci bo stan za kazdym razem sie resetuje
+												monthlyData[month].nrOfTeachers == 0 &&
+												month == months[indexOfFirstMonth]
+													? ""
+													: monthlyData[months[indexOfFirstMonth]].nrOfTeachers
+											}
+											onChange={(e) => {
+												updateMonthlyDataV3("nrOfTeachers", e.target.value);
+											}}
+											readOnly={month !== firstMonth}></Input>
+
+										<p>Nr of Students</p>
+										<Input
+											type="text"
+											// value from our months data, always synchronised
+											value={
+												monthlyData[month].nrOfStud == 0 &&
+												month == months[indexOfFirstMonth]
+													? ""
+													: monthlyData[firstMonth].nrOfStud
+											}
+											onChange={(e) =>
+												updateMonthlyDataV3("nrOfStud", e.target.value)
+											}
+											readOnly={month !== firstMonth}></Input>
+
 										<p>Nr of Meetings </p>
 										<Input
 											type="text"
@@ -717,6 +717,23 @@ export default function MainnnPage() {
 													e.target.value
 												);
 											}}></Input>
+
+										<p>Rate per Student per Meeting </p>
+										<Input
+											type="text"
+											value={
+												monthlyData[month].ratePerStudPerMeeting == 0 &&
+												month == months[indexOfFirstMonth]
+													? ""
+													: monthlyData[firstMonth].ratePerStudPerMeeting
+											}
+											onChange={(e) => {
+												updateMonthlyDataV3(
+													"ratePerStudPerMeeting",
+													e.target.value
+												);
+											}}
+											readOnly={month !== firstMonth}></Input>
 									</div>
 								</div>
 							))}
@@ -735,7 +752,24 @@ export default function MainnnPage() {
 									<h2 className="text-center mb-1">Month: {month}</h2>
 
 									<div className="grid grid-cols-2 gap-2 p-3 text-xs items-center border border-black dark:border-amber-50 rounded-2xl ">
-										
+										<p>Student Licenses</p>
+										<Input
+											type="text"
+											// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
+											value={
+												month == firstMonth
+													? monthlyData[firstMonth].studLicenses
+													: ""
+											}
+											onChange={(e) => {
+												updateMonthlyData(
+													firstMonth,
+													"studLicenses",
+													Number(e.target.value)
+												);
+											}}
+											readOnly={month !== firstMonth}></Input>
+
 										<p>Teacher Cost </p>
 										<Input
 											type="number"
@@ -754,7 +788,23 @@ export default function MainnnPage() {
 												);
 											}}></Input>
 
-										
+										<p>Child Safety Certifications</p>
+										<Input
+											type="text"
+											// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
+											value={
+												month == firstMonth
+													? monthlyData[firstMonth].childSafetyCert
+													: ""
+											}
+											onChange={(e) => {
+												updateMonthlyData(
+													firstMonth,
+													"childSafetyCert",
+													Number(e.target.value)
+												);
+											}}
+											readOnly={month !== firstMonth}></Input>
 									</div>
 								</div>
 							))}
