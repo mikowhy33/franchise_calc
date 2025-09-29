@@ -24,28 +24,209 @@ import {
 import { useState } from "react";
 import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
 import { get } from "http";
-const months = [
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-] as const;
-type Month = (typeof months)[number];
 
-const indexOfFirstMonth = months.indexOf(months[0]);
+import {
+	MonthlyData,
+	Monthly,
+	Month,
+	months,
+	firstMonth,
+	indexOfFirstMonth,
+} from "@/types/mytypes";
 
-	const firstMonth = months[0];
+// ! types has been moved to the types/mytypes.ts FILE !
 
 export default function MainnnPage() {
 	const { setTheme } = useTheme();
+
+	// ROZWIĄZANIE 1: Jeden obiekt z danymi dla wszystkich miesięcy
+	// here we give info about useState keys and data of starting point
+	// June July August September October November December January February March April May
+	const [monthlyData, setMonthlyData] = useState<MonthlyData>({
+		June: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+			//teacherCostPIE: 0,
+			transportCost: 0,
+			//teacherCostPEL: 0,
+
+			childSafetyCert: 0,
+		},
+		July: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+			//teacherCostPIE: 0,
+			transportCost: 0,
+			//teacherCostPEL: 0,
+
+			childSafetyCert: 0,
+		},
+		August: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+			//teacherCostPIE: 0,
+			transportCost: 0,
+			//teacherCostPEL: 0,
+
+			childSafetyCert: 0,
+		},
+		September: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		October: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		November: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		December: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		January: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		February: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		March: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		April: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+		May: {
+			nrOfStud: 0,
+
+			nrOfTeachers: 0,
+			nrOfMeetings: 0,
+
+			ratePerStudPerMeeting: 0,
+
+			// Costs
+			studLicenses: 0,
+
+			transportCost: 0,
+
+			childSafetyCert: 0,
+		},
+	});
 
 	// NO LONGER IN USE BUT NICE 4 PRACTICE
 	const nr: Record<Month, number> = {
@@ -135,229 +316,7 @@ export default function MainnnPage() {
 
 	// months as literals and their type, months is now a typle with these exact types
 
-	
-
 	console.log(months[indexOfFirstMonth] + "TEEEEST");
-
-	// union of all months, give all the indecs, returns a union. TS trick
-
-	// type of a one month
-	type Monthly = {
-		nrOfStud: number;
-
-		nrOfTeachers: number;
-		nrOfMeetings: number;
-
-		ratePerStudPerMeeting: number;
-
-		studLicenses: number;
-		//teacherCostPIE: number;
-		//teacherCostPEL: number;
-		transportCost: number;
-
-		childSafetyCert: number;
-	};
-
-	// type as a whole, keys are September,Oct etc
-	// Value is a type of Month with all the values
-	type MonthlyData = Record<Month, Monthly>;
-
-	// ROZWIĄZANIE 1: Jeden obiekt z danymi dla wszystkich miesięcy
-	// here we give info about useState keys and data of starting point
-	// June July August September October November December January February March April May
-	const [monthlyData, setMonthlyData] = useState<MonthlyData>({
-		June: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			//teacherCostPIE: 0,
-			transportCost: 0,
-			//teacherCostPEL: 0,
-
-			childSafetyCert: 0,
-		},
-		July: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			//teacherCostPIE: 0,
-			transportCost: 0,
-			//teacherCostPEL: 0,
-
-			childSafetyCert: 0,
-		},
-		August: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			//teacherCostPIE: 0,
-			transportCost: 0,
-			//teacherCostPEL: 0,
-
-			childSafetyCert: 0,
-		},
-		September: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-		October: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			
-			transportCost: 0,
-
-			childSafetyCert: 0,
-		},
-		November: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			
-			transportCost: 0,
-
-			childSafetyCert: 0,
-		},
-		December: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-		
-			transportCost: 0,
-
-			childSafetyCert: 0,
-		},
-		January: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-		February: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-		March: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-		April: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-		
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-		May: {
-			nrOfStud: 0,
-
-			nrOfTeachers: 0,
-			nrOfMeetings: 0,
-
-			ratePerStudPerMeeting: 0,
-
-			// Costs
-			studLicenses: 0,
-			
-			transportCost: 0,
-			
-
-			childSafetyCert: 0,
-		},
-	});
 
 	// zeby w inpucie edytowac wszystko potrzebujemy konkretny miesiac
 	// w tym miesiacu konkretne pole
@@ -420,7 +379,7 @@ export default function MainnnPage() {
 	) => {
 		// we take all the previous data
 		// when we give function to a set attribute in setstate hook we can take previous values
-		console.error(value);
+		// console.error(value);
 		setMonthlyData((prev) => ({
 			// all the data inside is taken, were doing a copy
 			// prev HAS A MONTHLYDATA TYPE!
