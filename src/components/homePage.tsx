@@ -24,6 +24,25 @@ import {
 import { useState } from "react";
 import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
 import { get } from "http";
+const months = [
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+] as const;
+type Month = (typeof months)[number];
+
+const indexOfFirstMonth = months.indexOf(months[0]);
+
+	const firstMonth = months[0];
 
 export default function MainnnPage() {
 	const { setTheme } = useTheme();
@@ -115,29 +134,12 @@ export default function MainnnPage() {
 	};
 
 	// months as literals and their type, months is now a typle with these exact types
-	const months = [
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December",
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-	] as const;
 
-	const indexOfFirstMonth = months.indexOf(months[0]);
-
-	const firstMonth = months[0];
+	
 
 	console.log(months[indexOfFirstMonth] + "TEEEEST");
 
 	// union of all months, give all the indecs, returns a union. TS trick
-	type Month = (typeof months)[number];
 
 	// type of a one month
 	type Monthly = {
@@ -162,7 +164,6 @@ export default function MainnnPage() {
 
 	// ROZWIĄZANIE 1: Jeden obiekt z danymi dla wszystkich miesięcy
 	// here we give info about useState keys and data of starting point
-
 	// June July August September October November December January February March April May
 	const [monthlyData, setMonthlyData] = useState<MonthlyData>({
 		June: {
@@ -223,9 +224,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+			
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -239,8 +240,8 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
-			//teacherCostPEL: 0,
+			
+			
 			transportCost: 0,
 
 			childSafetyCert: 0,
@@ -255,9 +256,8 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			// taking the costs out, now they are a result of a function
-			//teacherCostPIE: 0,
-			//teacherCostPEL: 0,
+			
+			
 			transportCost: 0,
 
 			childSafetyCert: 0,
@@ -272,9 +272,7 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			// taking the costs out, now they are a result of a function
-			//teacherCostPIE: 0,
-			//teacherCostPEL: 0,
+		
 			transportCost: 0,
 
 			childSafetyCert: 0,
@@ -289,9 +287,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+			
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -305,9 +303,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+			
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -321,9 +319,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+			
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -337,9 +335,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+		
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -353,9 +351,9 @@ export default function MainnnPage() {
 
 			// Costs
 			studLicenses: 0,
-			//teacherCostPIE: 0,
+			
 			transportCost: 0,
-			//teacherCostPEL: 0,
+			
 
 			childSafetyCert: 0,
 		},
@@ -418,10 +416,11 @@ export default function MainnnPage() {
 	const updateMonthlyData = (
 		month: Month,
 		field: keyof Monthly,
-		value: string | number
+		value: Number
 	) => {
 		// we take all the previous data
 		// when we give function to a set attribute in setstate hook we can take previous values
+		console.error(value);
 		setMonthlyData((prev) => ({
 			// all the data inside is taken, were doing a copy
 			// prev HAS A MONTHLYDATA TYPE!
@@ -435,7 +434,7 @@ export default function MainnnPage() {
 				// keyof typeof prev=== keyof MonthlyData
 				...prev[month as keyof typeof prev],
 				// and we change the value, fiel we have given
-				[field]: Number(value) || 0,
+				[field]: value || 0,
 			},
 		}));
 	};
@@ -552,6 +551,7 @@ export default function MainnnPage() {
 		return sum;
 	};
 
+	const [formData, setFormData] = useState<Monthly>(monthlyData[months[0]]);
 	return (
 		// minimalna wysokosc to ekran wiec 100vh
 		// MAIN DOCELOWO MA 100% ELEMENT BLOKOWY!
@@ -583,338 +583,237 @@ export default function MainnnPage() {
 			{/* DIV BASICOWO ZAJMUJE 100% RODZICA! */}
 			{/* max-w kolumny mają pulap szerokosci, max 1280px, gdy rozciagam grid przestaje rosnac po 1280, kolumny maja stala szerokosc */}
 			{/* mx-auto karty zawsze wysrodkowane i basta */}
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-auto max-w  ">
+			{/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl px-auto  "> */}
+			<div className="flex flex-col gap-6 justify-center ">
 				{/* Left Column */}
 
 				{/* what is inside the Card will be vertically due to flex, card takes full width of the column but not more than sm~24rem */}
 				{/* BEZ MAX-W-SM TA KARTA WEZMIE CALA SZEROKOSC DIVA ALE TYLKO JEDNA KOLUMNE BO JEST GRID KTORY DZIELI DIVA NA 3 ROWNE CZESCI, OZNACZA TO TYLE, ZE PO PROSTU WEZMIE FULL SZEROKOSCI GRIDA. BEZ TEGO WZIELABY CALA SZEROKOSC DIVA CZYLI RODZICA! */}
-				<Card className=" flex flex-col  p-10  w-full ">
-					<CardHeader>Basic Data</CardHeader>
+				<div className="flex flex-1 w-full gap-5 flex-wrap mx-auto justify-around content-center">
+					<Card className=" flex flex-col w-full p-10 max-w-lg">
+						<CardHeader className="px-0 pt-0">
+							<CardTitle className="text-2xl text-center">Basic Data</CardTitle>
+						</CardHeader>
 
-					<h2>Teacher cost Calculation</h2>
-					<div className="bg-gray-300 dark:bg-gray-900 space-y-3 p-5 rounded-2xl">
-						<p>Avg Salary Assumption</p>
-						<Input
-							type="text"
-							onChange={(e) => {
-								setavgsalaryassumption(Number(e.target.value));
-							}}></Input>
+						<div className="bg-gray-100 dark:bg-gray-800 space-y-4 p-4  rounded-lg border border-black dark:border-gray-700">
+							{/* <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg Salary Assumption</label> */}
 
-						<p>Working Days</p>
-						<Input
-							className="border border-black dark:border-white "
-							type="text"
-							onChange={(e) => {
-								setworkingdays(Number(e.target.value));
-							}}></Input>
+							<p className="mb-7 text-sm text-center  text-black dark:text-white font-medium">
+								<span className=" border-b pb-1 border-gray-200">
+									Teacher Cost Calculation
+								</span>
+							</p>
+							<div>
+								<label className="block mb-1">Avg Salary Assumption</label>
+								<Input
+									type="text"
+									onChange={(e) => {
+										setavgsalaryassumption(Number(e.target.value));
+									}}></Input>
+							</div>
 
-						<p>
-							Teacher Cost Per Day:{" "}
-							{!Number.isNaN(TeacherCostPerDay) &&
-							Number.isFinite(TeacherCostPerDay)
-								? TeacherCostPerDay
-								: 0}
-						</p>
-					</div>
-
-					<h2>These inputs will apply for every month </h2>
-					<div className="space-y-3">
-						<p>Number of Teachers</p>
-						<Input
-							type="text"
-							value={
-								// jesli nie damy tego zabezpieczenia stan bedzie powracal za kazdym razem do pustego "", wtedy nie mozemy doklejac wartosci bo stan za kazdym razem sie resetuje
-								monthlyData[firstMonth].nrOfTeachers == 0
-									? ""
-									: monthlyData[months[indexOfFirstMonth]].nrOfTeachers
-							}
-							// update for every month there is
-							onChange={(e) => {
-								updateMonthlyDataV3("nrOfTeachers", e.target.value);
-							}}></Input>
-
-						<p>Number of Students</p>
-						<Input
-							type="text"
-							// value from our months data, always synchronised
-							value={
-								monthlyData[firstMonth].nrOfStud == 0
-									? ""
-									: monthlyData[firstMonth].nrOfStud
-							}
-							onChange={(e) =>
-								updateMonthlyDataV3("nrOfStud", e.target.value)
-							}></Input>
-
-						<p>Rate per Student per Meeting </p>
-						<Input
-							type="text"
-							value={
-								monthlyData[firstMonth].ratePerStudPerMeeting == 0
-									? ""
-									: monthlyData[firstMonth].ratePerStudPerMeeting
-							}
-							onChange={(e) => {
-								updateMonthlyDataV3("ratePerStudPerMeeting", e.target.value);
-							}}></Input>
-					</div>
-
-					<h2>These inputs are one time costs </h2>
-					<div className="space-y-3">
-						<p>Student Licenses</p>
-						<Input
-							type="text"
-							// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
-							value={monthlyData[firstMonth].studLicenses}
-							onChange={(e) => {
-								updateMonthlyData(
-									firstMonth,
-									"studLicenses",
-									Number(e.target.value)
-								);
-							}}></Input>
-
-						<p>Child Safety Certifications</p>
-						<Input
-							type="text"
-							// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
-							value={monthlyData[firstMonth].childSafetyCert}
-							onChange={(e) => {
-								updateMonthlyData(
-									firstMonth,
-									"childSafetyCert",
-									Number(e.target.value)
-								);
-							}}
-							></Input>
-					</div>
-				</Card>
-
-				{/* Middle column, here card takes also a full width but not more than md */}
-				<Card className="flex flex-col  p-10 w-full ">
-					<CardHeader>Monthly info</CardHeader>
-
-					<CardContent>
-						<div className=" space-y-5 ">
-							{months.map((month, index) => (
-								<div key={month}>
-									<h2 className="text-center mb-1">Month: {month}</h2>
-
-									{/* robi dwie kolumny dla par label input  items-center wyrownuje elementu pionowo do srodka*/}
-									<div className="grid grid-cols-2 gap-2 text-xs border border-black dark:border-amber-50 p-3 rounded-2xl items-center">
-										<p>Nr of Meetings </p>
-										<Input
-											type="text"
-											value={
-												monthlyData[month].nrOfMeetings == 0
-													? ""
-													: monthlyData[month].nrOfMeetings
-											}
-											onChange={(e) => {
-												updateMonthlyData(
-													month,
-													"nrOfMeetings",
-													e.target.value
-												);
-											}}></Input>
-									</div>
-								</div>
-							))}
-						</div>
-					</CardContent>
-				</Card>
-
-				{/* turns out we dont have to add flex-col bcs card already have it xd */}
-				<Card className="w-full ">
-					<CardHeader>Costs</CardHeader>
-
-					<CardContent>
-						<div className=" space-y-5 ">
-							{months.map((month, index) => (
-								<div key={month}>
-									<h2 className="text-center mb-1">Month: {month}</h2>
-
-									<div className="grid grid-cols-2 gap-2 p-3 text-xs items-center border border-black dark:border-amber-50 rounded-2xl ">
-										
-										<p>Teacher Cost </p>
-										<Input
-											type="number"
-											value={getTeacherCost(month)}
-											readOnly></Input>
-
-										<p>Transport Cost </p>
-										<Input
-											type="text"
-											value={monthlyData[month].transportCost}
-											onChange={(e) => {
-												updateMonthlyData(
-													month,
-													"transportCost",
-													Number(e.target.value)
-												);
-											}}></Input>
-
-										
-									</div>
-								</div>
-							))}
-						</div>
-					</CardContent>
-				</Card>
-
-				{/* od lg ta karta rozciaga sie na wszystkie 3 kolumny grida czyli na to co wyzej */}
-				<Card className="lg:col-span-3 ml-[0%]">
-					<CardHeader>Calculations output</CardHeader>
-
-					<CardContent>
-						{/* pozwala na przewijanie tabeli poziomo gdy nie miesci sie na ekranie */}
-						<div className="overflow-x-auto ">
-							<table className="w-full text-sm  border-collapse">
-								<thead>
-									<tr className="border-b">
-										<th className="text-left p-2 font-bold">Metric / Month</th>
-										{months.map((month) => (
-											<th key={month} className="text-center p-2 font-bold">
-												{month}
-											</th>
-										))}
-									</tr>
-								</thead>
-
-								<tbody>
-									<tr className="border-b bg-green-50 dark:bg-green-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Revenue
-										</td>
-
-										{months.map((month, index) => (
-											<td key={index} className="text-center p-2">
-												{getMonthlyRevenue(month)}
-											</td>
-										))}
-									</tr>
-
-									<tr className="border-b bg-red-50 dark:bg-red-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly TOTAL Costs
-										</td>
-
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{getAllCosts(month)}
-											</td>
-										))}
-									</tr>
-
-									<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Profit/Lost
-										</td>
-
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{monthlyProfit_Loss(month)}
-											</td>
-										))}
-									</tr>
-
-									<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Profitability %{" "}
-										</td>
-
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{getTotalMonthlyRevenue(month) === 0
-													? "0%"
-													: (
-															(monthlyProfit_Loss(month) /
-																getTotalMonthlyRevenue(month)) *
-															100
-													  ).toFixed(2) + "%"}
-											</td>
-										))}
-									</tr>
-
-									<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
-										<td className="p-2 font-medium text-left"> Cashflow </td>
-
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{cashFlow(month)}
-											</td>
-										))}
-									</tr>
-								</tbody>
-							</table>
+							<div>
+								<label className="block mb-1">Working Days</label>
+								<Input
+									className="border border-black dark:border-white "
+									type="text"
+									onChange={(e) => {
+										setworkingdays(Number(e.target.value));
+									}}></Input>
+							</div>
+							<p>
+								Teacher Cost Per Day:{" "}
+								{!Number.isNaN(TeacherCostPerDay) &&
+								Number.isFinite(TeacherCostPerDay)
+									? TeacherCostPerDay
+									: 0}
+							</p>
 						</div>
 
-						<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-							<h4 className="font-bold mb-3">📊 Summary</h4>
+						<div className="bg-blue-50 dark:bg-blue-900/20 space-y-4 p-5 rounded-lg border border-black dark:border-blue-800">
+							<p className="mb-7 text-sm text-center  text-black dark:text-white font-medium">
+								<span className=" border-b-1 pb-1 border-gray-200">
+									These inputs will apply for every month
+								</span>
+							</p>
+							<div className="space-y-3">
+								<div className="space-y-2">
+									<label className="block mb-1">Number of teachers</label>
+									<Input
+										type="text"
+										// value={
+										// 	monthlyData[firstMonth].nrOfTeachers == 0
+										// 		? ""
+										// 		: monthlyData[firstMonth].nrOfTeachers
+										// }
+										// update for every month there is
+										onChange={(e) => {
+											updateMonthlyDataV3("nrOfTeachers", e.target.value);
+										}}></Input>
+								</div>
 
-							{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
-							<div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Revenue
-									</div>
-									<div className="font-bold text-lg text-green-600">
-										{months
-											.reduce(
-												(sum, month) => sum + getTotalMonthlyRevenue(month),
-												0
-											)
-											.toLocaleString()}
-									</div>
+								<div className="space-y-2">
+									<label className="block mb-1">Number of Students</label>
+									<Input
+										type="text"
+										// value from our months data, always synchronised
+										// value={
+										// 	monthlyData[firstMonth].nrOfStud == 0
+										// 		? ""
+										// 		: monthlyData[firstMonth].nrOfStud
+										// }
+										onChange={(e) =>
+											updateMonthlyDataV3("nrOfStud", e.target.value)
+										}></Input>
 								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Costs
-									</div>
-									<div className="font-bold text-lg text-red-600">
-										{months
-											.reduce((sum, month) => sum + getAllCosts(month), 0)
-											.toLocaleString()}
-									</div>
-								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Profit
-									</div>
-									<div className="font-bold text-lg text-blue-600">
-										{months
-											.reduce(
-												(sum, month) => sum + monthlyProfit_Loss(month),
-												0
-											)
-											.toLocaleString()}
-									</div>
-								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Profit %
-									</div>
-									<div className="font-bold text-lg text-purple-600">
-										{(() => {
-											const totalRevenue = months.reduce(
-												(sum, month) => sum + getTotalMonthlyRevenue(month),
-												0
+
+								<div className="space-y-2">
+									<label className="block mb-1">
+										Rate per Student per Meeting{" "}
+									</label>
+									<Input
+										type="text"
+										// value={
+										// 	monthlyData[firstMonth].ratePerStudPerMeeting == 0
+										// 		? ""
+										// 		: monthlyData[firstMonth].ratePerStudPerMeeting
+										// }
+										onChange={(e) => {
+											updateMonthlyDataV3(
+												"ratePerStudPerMeeting",
+												e.target.value
 											);
-											const totalProfit = months.reduce(
-												(sum, month) => sum + monthlyProfit_Loss(month),
-												0
-											);
-
-											return totalRevenue === 0
-												? "0%"
-												: ((totalProfit / totalRevenue) * 100).toFixed(2) + "%";
-										})()}
-									</div>
+										}}></Input>
 								</div>
 							</div>
 						</div>
-					</CardContent>
-				</Card>
+
+						<div className="bg-amber-50 dark:bg-amber-900/20 space-y-4 p-5 rounded-lg border border-black dark:border-amber-800">
+							<p className="mb-7 text-sm text-center text-black dark:text-white font-medium">
+								<span className=" border-b-1 pb-1 border-gray-200">
+									These costs apply only to the first month
+								</span>
+							</p>
+							<div className="space-y-3">
+								<label className="block mb-1">Student Licenses</label>
+								<Input
+									type="text"
+									// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
+									// value={monthlyData[firstMonth].studLicenses}
+									onChange={(e) => {
+										updateMonthlyData(
+											firstMonth,
+											"studLicenses",
+											Number(e.target.value)
+										);
+									}}></Input>
+
+								<label className="block mb-1">
+									Child Safety Certifications
+								</label>
+								<Input
+									type="text"
+									// jesli 1 mies to pokazujemy dane w kazdym nastepnym 0
+									// value={monthlyData[firstMonth].childSafetyCert}
+									onChange={(e) => {
+										updateMonthlyData(
+											firstMonth,
+											"childSafetyCert",
+											Number(e.target.value)
+										);
+									}}></Input>
+							</div>
+						</div>
+					</Card>
+
+					{/* left column, here card takes also a full width but not more than md */}
+					<Card className="flex flex-col p-9 w-full  max-w-lg">
+						<CardHeader className="px-0 pt-0">
+							<CardTitle className="text-2xl text-center">
+								Monthly info
+							</CardTitle>
+						</CardHeader>
+
+						<CardDescription className="text-sm mt-2 text-center max-w-md  text-black dark:text-white">
+							These informations change every month. Teacher cost is calculated
+							<span className=" border-b-1 pb-1 border-gray-200">
+								{" "}
+								automatically.
+							</span>
+						</CardDescription>
+
+						<CardContent>
+							<div className=" space-y-5 ">
+								{months.map((month, index) => (
+									<div
+										key={month}
+										className="border border-black dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+										<h3 className="font-semibold text-base mb-3 text-gray-900 dark:text-gray-100 border-b pb-2 border-gray-200 dark:border-gray-700">
+											{month}
+										</h3>
+
+										<div className="flex flex-col gap-3">
+											<div>
+												<label className="block mb-0.5">Nr of Meetings </label>
+												<Input
+													type="text"
+													// value={
+													// 	monthlyData[month].nrOfMeetings == 0
+													// 		? ""
+													// 		: monthlyData[month].nrOfMeetings
+													// }
+													onChange={(e) => {
+														updateMonthlyData(
+															month,
+															"nrOfMeetings",
+															Number(e.target.value)
+														);
+													}}></Input>
+											</div>
+
+											<div>
+												<label className="block mb-0.5">Transport Cost </label>
+												<Input
+													className="max-w-full overflow-hidden text-ellipsis"
+													type="text"
+													// value={monthlyData[month].transportCost}
+													onChange={(e) => {
+														updateMonthlyData(
+															month,
+															"transportCost",
+															Number(e.target.value)
+														);
+													}}></Input>
+											</div>
+
+											<div>
+												<label className="block mb-0.5">
+													Teacher Cost (calculated, readonly){" "}
+												</label>
+												<Input
+													className="!bg-blue-800 dark:!bg-blue-950 read-only:!bg-blue-800 dark:read-only:!bg-blue-950 text-white"
+													type="number"
+													value={getTeacherCost(month)}
+													readOnly></Input>
+											</div>
+										</div>
+									</div>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</div>
+				{/* turns out we dont have to add flex-col bcs card already have it xd */}
+
+				{/* od lg ta karta rozciaga sie na wszystkie 3 kolumny grida czyli na to co wyzej */}
+				<CalcOutput
+					months={months}
+					getMonthlyRevenue={getMonthlyRevenue}
+					getAllCosts={getAllCosts}
+					monthlyProfit_Loss={monthlyProfit_Loss}
+					getTotalMonthlyRevenue={getTotalMonthlyRevenue}
+					cashFlow={cashFlow}
+				/>
 			</div>
 			{/* </div> */}
 		</main>
@@ -1000,3 +899,170 @@ const nrofStudsref = React.useRef<any>(0);
 						</Button>
 
 */
+type CalcOutputProps = {
+	months: ReadonlyArray<Month>;
+	getMonthlyRevenue: any;
+	getAllCosts: any;
+	monthlyProfit_Loss: any;
+	getTotalMonthlyRevenue: any;
+	cashFlow: any;
+};
+
+function CalcOutput({
+	months,
+	getMonthlyRevenue,
+	getAllCosts,
+	monthlyProfit_Loss,
+	getTotalMonthlyRevenue,
+	cashFlow,
+}: CalcOutputProps) {
+	return (
+		<Card className="lg:col-span-3 ml-[0%]">
+			<CardHeader>Calculations output</CardHeader>
+
+			<CardContent>
+				{/* pozwala na przewijanie tabeli poziomo gdy nie miesci sie na ekranie */}
+				<div className="overflow-x-auto ">
+					<table className="w-full text-sm  border-collapse">
+						<thead>
+							<tr className="border-b">
+								<th className="text-left p-2 font-bold">Metric / Month</th>
+								{months.map((month) => (
+									<th key={month} className="text-center p-2 font-bold">
+										{month}
+									</th>
+								))}
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr className="border-b bg-green-50 dark:bg-green-900/20">
+								<td className="p-2 font-medium text-left">Monthly Revenue</td>
+
+								{months.map((month, index) => (
+									<td key={index} className="text-center p-2">
+										{getMonthlyRevenue(month)}
+									</td>
+								))}
+							</tr>
+
+							<tr className="border-b bg-red-50 dark:bg-red-900/20">
+								<td className="p-2 font-medium text-left">
+									Monthly TOTAL Costs
+								</td>
+
+								{months.map((month, index) => (
+									<td key={month} className="text-center p-2">
+										{getAllCosts(month)}
+									</td>
+								))}
+							</tr>
+
+							<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+								<td className="p-2 font-medium text-left">
+									Monthly Profit/Lost
+								</td>
+
+								{months.map((month, index) => (
+									<td key={month} className="text-center p-2">
+										{monthlyProfit_Loss(month)}
+									</td>
+								))}
+							</tr>
+
+							<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
+								<td className="p-2 font-medium text-left">
+									Monthly Profitability %{" "}
+								</td>
+
+								{months.map((month, index) => (
+									<td key={month} className="text-center p-2">
+										{getTotalMonthlyRevenue(month) === 0
+											? "0%"
+											: (
+													(monthlyProfit_Loss(month) /
+														getTotalMonthlyRevenue(month)) *
+													100
+											  ).toFixed(2) + "%"}
+									</td>
+								))}
+							</tr>
+
+							<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+								<td className="p-2 font-medium text-left"> Cashflow </td>
+
+								{months.map((month, index) => (
+									<td key={month} className="text-center p-2">
+										{cashFlow(month)}
+									</td>
+								))}
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+					<h4 className="font-bold mb-3">📊 Summary</h4>
+
+					{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+						<div>
+							<div className="text-gray-600 dark:text-gray-400">
+								Total Revenue
+							</div>
+							<div className="font-bold text-lg text-green-600">
+								{months
+									.reduce(
+										(sum, month) => sum + getTotalMonthlyRevenue(month),
+										0
+									)
+									.toLocaleString()}
+							</div>
+						</div>
+						<div>
+							<div className="text-gray-600 dark:text-gray-400">
+								Total Costs
+							</div>
+							<div className="font-bold text-lg text-red-600">
+								{months
+									.reduce((sum, month) => sum + getAllCosts(month), 0)
+									.toLocaleString()}
+							</div>
+						</div>
+						<div>
+							<div className="text-gray-600 dark:text-gray-400">
+								Total Profit
+							</div>
+							<div className="font-bold text-lg text-blue-600">
+								{months
+									.reduce((sum, month) => sum + monthlyProfit_Loss(month), 0)
+									.toLocaleString()}
+							</div>
+						</div>
+						<div>
+							<div className="text-gray-600 dark:text-gray-400">
+								Total Profit %
+							</div>
+							<div className="font-bold text-lg text-purple-600">
+								{(() => {
+									const totalRevenue = months.reduce(
+										(sum, month) => sum + getTotalMonthlyRevenue(month),
+										0
+									);
+									const totalProfit = months.reduce(
+										(sum, month) => sum + monthlyProfit_Loss(month),
+										0
+									);
+
+									return totalRevenue === 0
+										? "0%"
+										: ((totalProfit / totalRevenue) * 100).toFixed(2) + "%";
+								})()}
+							</div>
+						</div>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
