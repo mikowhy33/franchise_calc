@@ -513,8 +513,9 @@ export default function MainnnPage() {
 	const [formData, setFormData] = useState<Monthly>(monthlyData[months[0]]);
 	return (
 		// minimalna wysokosc to ekran wiec 100vh
-		// MAIN DOCELOWO MA 100% ELEMENT BLOKOWY!
-		<main className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 p-4 ">
+		// MAIN DOCELOWO MA 100% SZEROKOSCI ELEMENT BLOKOWY!
+		// wszystkie elementy w mainie maja sie ukladac w kolumnie, oraz ma zajmowac cala wysokosc koniec i czesc
+		<main className="flex flex-col min-h-screen  bg-gray-50 dark:bg-gray-900 p-4 ">
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" size="icon">
@@ -536,19 +537,19 @@ export default function MainnnPage() {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			{/* we give a max width, also we center it horizontally by mx-auto */}
-			{/* <div className="max-w-7xl mx-auto"> */}
-			{/* it will be in a grid so normally everything inside one column, from lg 3 columns */}
-			{/* DIV BASICOWO ZAJMUJE 100% RODZICA! */}
-			{/* max-w kolumny mają pulap szerokosci, max 1280px, gdy rozciagam grid przestaje rosnac po 1280, kolumny maja stala szerokosc */}
-			{/* mx-auto karty zawsze wysrodkowane i basta */}
-			{/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl px-auto  "> */}
-			<div className="flex flex-col gap-6 justify-center ">
-				{/* Left Column */}
+			{/* w tym divie elementy maja sie ukladac w kolumnie a przestrzen miedzy nimi oddalona o gap-6 */}
+			<div className="flex flex-col gap-6  ">
+				
+				{/* w tym divie karty ukladaja sie w rzedzie dzieki flex */}
+				{/* zajmuje on pelna szerokosc swojego rodzica czyli diva wyzej (osiagalne bez w-full bo div zawsze zajmuje 100% szerokosci rodzica)! */}
+				{/* flex wrap powoduje ze karty lamia sie do nowej linii gdy nie ma miejsca */}
+				{/* te dwie karty zawsze wysrodkowane */}
+				{/* warto pamietac tutaj, ze karty rozciagaja sie w stosunku do najwiekszej jesli jest flex wiec stretching nastepuje automatycznie! */}
+				<div className="flex  gap-5 flex-wrap justify-center">
 
-				{/* what is inside the Card will be vertically due to flex, card takes full width of the column but not more than sm~24rem */}
-				{/* BEZ MAX-W-SM TA KARTA WEZMIE CALA SZEROKOSC DIVA ALE TYLKO JEDNA KOLUMNE BO JEST GRID KTORY DZIELI DIVA NA 3 ROWNE CZESCI, OZNACZA TO TYLE, ZE PO PROSTU WEZMIE FULL SZEROKOSCI GRIDA. BEZ TEGO WZIELABY CALA SZEROKOSC DIVA CZYLI RODZICA! */}
-				<div className="flex flex-1 w-full gap-5 flex-wrap mx-auto justify-around content-center">
+					{/* rzeczy w kartach sa ulozone za pomoca flexa, flex idzie jako kolumna */}
+					{/* szerokosc karty jest maksymalna, jednak nie wieksza niz lg, dodatkowo w sorku nalozony padding */}
+					
 					<Card className=" flex flex-col w-full p-10 max-w-lg">
 						<CardHeader className="px-0 pt-0">
 							<CardTitle className="text-2xl text-center">Basic Data</CardTitle>
@@ -600,6 +601,8 @@ export default function MainnnPage() {
 									<label className="block mb-1">Number of teachers</label>
 									<Input
 										type="text"
+										// BEZ VALUE, Jesli damy value tak konflikt interesow, zmiana z stringa na number, duza ilosc konwertowania niszczy tutaj mase rzeczy  	
+
 										// value={
 										// 	monthlyData[firstMonth].nrOfTeachers == 0
 										// 		? ""
@@ -685,8 +688,9 @@ export default function MainnnPage() {
 						</div>
 					</Card>
 
-					{/* left column, here card takes also a full width but not more than md */}
-					<Card className="flex flex-col p-9 w-full  max-w-lg">
+					{/* left column, here card takes also a full width but not more than lg */}
+
+					<Card className="flex flex-col p-9 w-full max-w-lg">
 						<CardHeader className="px-0 pt-0">
 							<CardTitle className="text-2xl text-center">
 								Monthly info
@@ -764,7 +768,7 @@ export default function MainnnPage() {
 				</div>
 				{/* turns out we dont have to add flex-col bcs card already have it xd */}
 
-				{/* od lg ta karta rozciaga sie na wszystkie 3 kolumny grida czyli na to co wyzej */}
+			
 				<CalcOutput
 					months={months}
 					getMonthlyRevenue={getMonthlyRevenue}
@@ -774,7 +778,7 @@ export default function MainnnPage() {
 					cashFlow={cashFlow}
 				/>
 			</div>
-			{/* </div> */}
+		
 		</main>
 	);
 }
@@ -797,12 +801,14 @@ function CalcOutput({
 	cashFlow,
 }: CalcOutputProps) {
 	return (
-		<Card className="lg:col-span-3 ml-[0%]">
-			<CardHeader>Calculations output</CardHeader>
+		<Card >
+			<CardHeader className="text-center">Calculations output</CardHeader>
 
 			<CardContent>
 				{/* pozwala na przewijanie tabeli poziomo gdy nie miesci sie na ekranie */}
 				<div className="overflow-x-auto ">
+
+					{/* tabela zajmuje pelna szerokosc karty dzieki w-full  */}
 					<table className="w-full text-sm  border-collapse">
 						<thead>
 							<tr className="border-b">
@@ -815,8 +821,12 @@ function CalcOutput({
 							</tr>
 						</thead>
 
+						{/* cialo naszej tabeli */}
 						<tbody>
+							{/* tr to rząd */}
 							<tr className="border-b bg-green-50 dark:bg-green-900/20">
+
+								{/* td pojedyncza komorka w rzedzie */}
 								<td className="p-2 font-medium text-left">Monthly Revenue</td>
 
 								{months.map((month, index) => (
@@ -882,7 +892,7 @@ function CalcOutput({
 				</div>
 
 				<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-					<h4 className="font-bold mb-3">📊 Summary</h4>
+					<h4 className="font-bold mb-7 text-center">📊 Summary</h4>
 
 					{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
