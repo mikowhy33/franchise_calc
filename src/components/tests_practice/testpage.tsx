@@ -1,5 +1,8 @@
 "use client";
 
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
 import { Input } from "@/components/ui/input";
 import {
 	Card,
@@ -552,6 +555,32 @@ export default function MainnnPage() {
 		return sum;
 	};
 
+	const reportRef = React.useRef<HTMLDivElement>(null);
+
+	const generatePDF = async () => {
+		const element = reportRef.current;
+		if (!element) return;
+
+		// html2canvas: HTML → Canvas
+		const canvas = await html2canvas(element, {
+			scale: 2,
+			useCORS: true,
+			backgroundColor: "#ffffff",
+		});
+
+		// Canvas API: Canvas → base64 string
+		const imgData = canvas.toDataURL("image/png");
+
+		// Oblicz proporcje
+		const imgWidth = 297;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		// jsPDF: stwórz PDF i dodaj obraz
+		const pdf = new jsPDF("l", "mm", "a4");
+		pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+		pdf.save("report.pdf");
+	};
+
 	return (
 		// minimalna wysokosc to ekran wiec 100vh
 		// MAIN DOCELOWO MA 100% ELEMENT BLOKOWY!
@@ -816,149 +845,159 @@ export default function MainnnPage() {
 				<Card className="lg:col-span-3 ml-[0%]">
 					<CardHeader>Calculations output</CardHeader>
 
+					{/* generates a PDF Report */}
+					<Button onClick={generatePDF} variant="outline">
+						📄 Download PDF Report
+					</Button>
+
 					<CardContent>
 						{/* pozwala na przewijanie tabeli poziomo gdy nie miesci sie na ekranie */}
-						<div className="overflow-x-auto ">
-							<table className="w-full text-sm  border-collapse">
-								<thead>
-									<tr className="border-b">
-										<th className="text-left p-2 font-bold">Metric / Month</th>
-										{months.map((month) => (
-											<th key={month} className="text-center p-2 font-bold">
-												{month}
+						<div ref={reportRef} className="bg-white dark:bg-gray-900 p-4">
+							<div className="overflow-x-auto ">
+								<table className="w-full text-sm  border-collapse">
+									<thead>
+										<tr className="border-b">
+											<th className="text-left p-2 font-bold">
+												Metric / Month
 											</th>
-										))}
-									</tr>
-								</thead>
+											{months.map((month) => (
+												<th key={month} className="text-center p-2 font-bold">
+													{month}
+												</th>
+											))}
+										</tr>
+									</thead>
 
-								<tbody>
-									<tr className="border-b bg-green-50 dark:bg-green-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Revenue
-										</td>
-
-										{months.map((month, index) => (
-											<td key={index} className="text-center p-2">
-												{getMonthlyRevenue(month)}
+									<tbody>
+										<tr className="border-b bg-green-50 dark:bg-green-900/20">
+											<td className="p-2 font-medium text-left">
+												Monthly Revenue
 											</td>
-										))}
-									</tr>
 
-									<tr className="border-b bg-red-50 dark:bg-red-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly TOTAL Costs
-										</td>
+											{months.map((month, index) => (
+												<td key={index} className="text-center p-2">
+													{getMonthlyRevenue(month)}
+												</td>
+											))}
+										</tr>
 
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{getAllCosts(month)}
+										<tr className="border-b bg-red-50 dark:bg-red-900/20">
+											<td className="p-2 font-medium text-left">
+												Monthly TOTAL Costs
 											</td>
-										))}
-									</tr>
 
-									<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Profit/Lost
-										</td>
+											{months.map((month, index) => (
+												<td key={month} className="text-center p-2">
+													{getAllCosts(month)}
+												</td>
+											))}
+										</tr>
 
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{monthlyProfit_Loss(month)}
+										<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+											<td className="p-2 font-medium text-left">
+												Monthly Profit/Lost
 											</td>
-										))}
-									</tr>
 
-									<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
-										<td className="p-2 font-medium text-left">
-											Monthly Profitability %{" "}
-										</td>
+											{months.map((month, index) => (
+												<td key={month} className="text-center p-2">
+													{monthlyProfit_Loss(month)}
+												</td>
+											))}
+										</tr>
 
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{getTotalMonthlyRevenue(month) === 0
+										<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
+											<td className="p-2 font-medium text-left">
+												Monthly Profitability %{" "}
+											</td>
+
+											{months.map((month, index) => (
+												<td key={month} className="text-center p-2">
+													{getTotalMonthlyRevenue(month) === 0
+														? "0%"
+														: (
+																(monthlyProfit_Loss(month) /
+																	getTotalMonthlyRevenue(month)) *
+																100
+														  ).toFixed(2) + "%"}
+												</td>
+											))}
+										</tr>
+
+										<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+											<td className="p-2 font-medium text-left"> Cashflow </td>
+
+											{months.map((month, index) => (
+												<td key={month} className="text-center p-2">
+													{cashFlow(month)}
+												</td>
+											))}
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+								<h4 className="font-bold mb-3">📊 Summary</h4>
+
+								{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
+								<div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+									<div>
+										<div className="text-gray-600 dark:text-gray-400">
+											Total Revenue
+										</div>
+										<div className="font-bold text-lg text-green-600">
+											{months
+												.reduce(
+													(sum, month) => sum + getTotalMonthlyRevenue(month),
+													0
+												)
+												.toLocaleString()}
+										</div>
+									</div>
+									<div>
+										<div className="text-gray-600 dark:text-gray-400">
+											Total Costs
+										</div>
+										<div className="font-bold text-lg text-red-600">
+											{months
+												.reduce((sum, month) => sum + getAllCosts(month), 0)
+												.toLocaleString()}
+										</div>
+									</div>
+									<div>
+										<div className="text-gray-600 dark:text-gray-400">
+											Total Profit
+										</div>
+										<div className="font-bold text-lg text-blue-600">
+											{months
+												.reduce(
+													(sum, month) => sum + monthlyProfit_Loss(month),
+													0
+												)
+												.toLocaleString()}
+										</div>
+									</div>
+									<div>
+										<div className="text-gray-600 dark:text-gray-400">
+											Total Profit %
+										</div>
+										<div className="font-bold text-lg text-purple-600">
+											{(() => {
+												const totalRevenue = months.reduce(
+													(sum, month) => sum + getTotalMonthlyRevenue(month),
+													0
+												);
+												const totalProfit = months.reduce(
+													(sum, month) => sum + monthlyProfit_Loss(month),
+													0
+												);
+
+												return totalRevenue === 0
 													? "0%"
-													: (
-															(monthlyProfit_Loss(month) /
-																getTotalMonthlyRevenue(month)) *
-															100
-													  ).toFixed(2) + "%"}
-											</td>
-										))}
-									</tr>
-
-									<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
-										<td className="p-2 font-medium text-left"> Cashflow </td>
-
-										{months.map((month, index) => (
-											<td key={month} className="text-center p-2">
-												{cashFlow(month)}
-											</td>
-										))}
-									</tr>
-								</tbody>
-							</table>
-						</div>
-
-						<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-							<h4 className="font-bold mb-3">📊 Summary</h4>
-
-							{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
-							<div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Revenue
-									</div>
-									<div className="font-bold text-lg text-green-600">
-										{months
-											.reduce(
-												(sum, month) => sum + getTotalMonthlyRevenue(month),
-												0
-											)
-											.toLocaleString()}
-									</div>
-								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Costs
-									</div>
-									<div className="font-bold text-lg text-red-600">
-										{months
-											.reduce((sum, month) => sum + getAllCosts(month), 0)
-											.toLocaleString()}
-									</div>
-								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Profit
-									</div>
-									<div className="font-bold text-lg text-blue-600">
-										{months
-											.reduce(
-												(sum, month) => sum + monthlyProfit_Loss(month),
-												0
-											)
-											.toLocaleString()}
-									</div>
-								</div>
-								<div>
-									<div className="text-gray-600 dark:text-gray-400">
-										Total Profit %
-									</div>
-									<div className="font-bold text-lg text-purple-600">
-										{(() => {
-											const totalRevenue = months.reduce(
-												(sum, month) => sum + getTotalMonthlyRevenue(month),
-												0
-											);
-											const totalProfit = months.reduce(
-												(sum, month) => sum + monthlyProfit_Loss(month),
-												0
-											);
-
-											return totalRevenue === 0
-												? "0%"
-												: ((totalProfit / totalRevenue) * 100).toFixed(2) + "%";
-										})()}
+													: ((totalProfit / totalRevenue) * 100).toFixed(2) +
+															"%";
+											})()}
+										</div>
 									</div>
 								</div>
 							</div>

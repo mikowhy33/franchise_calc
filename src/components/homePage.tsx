@@ -1,5 +1,16 @@
 "use client";
 
+import {
+	Document,
+	Page,
+	Text,
+	View,
+	StyleSheet,
+	pdf,
+	PDFDownloadLink,
+} from "@react-pdf/renderer";
+import ReactPDF from "@react-pdf/renderer";
+
 import { Input } from "@/components/ui/input";
 import {
 	Card,
@@ -510,7 +521,319 @@ export default function MainnnPage() {
 		return sum;
 	};
 
-	const [formData, setFormData] = useState<Monthly>(monthlyData[months[0]]);
+	// Style dla PDF
+	const styles = StyleSheet.create({
+		page: { padding: 30, fontSize: 10 },
+		title: { fontSize: 18, marginBottom: 20, textAlign: "center" },
+		table: { width: "100%", marginTop: 10 },
+		tableRow: {
+			flexDirection: "row",
+			borderBottomWidth: 1,
+			borderBottomColor: "#000",
+		},
+		headerRow: { backgroundColor: "#d1d5db", fontWeight: "bold" }, // szary 400
+		tableCell: { padding: 8, flex: 1, fontSize: 9, textAlign: "center" },
+		firstCell: { textAlign: "left", flex: 1.5 },
+
+		// better colors
+		greenRow: { backgroundColor: "#86efac" }, // zielony 300
+		redRow: { backgroundColor: "#fca5a5" }, // czerwony 300
+		indigoRow: { backgroundColor: "#a5b4fc" }, // indigo 300
+		purpleRow: { backgroundColor: "#d8b4fe" }, // fiolet 300
+
+		summaryTable: { flex: 1, flexDirection: "row", padding: 8 },
+	});
+
+	// Komponent PDF 
+	const MyDocument = ({
+		months,
+		getMonthlyRevenue,
+		getAllCosts,
+		monthlyProfit_Loss,
+		getTotalMonthlyRevenue,
+		cashFlow,
+		avgsalaryassumption,
+		workingDays,
+		teacherCostPerDay,
+		monthlyData,
+		getTeacherCost,
+	}: any) => (
+		<Document>
+			<Page size="A4" orientation="landscape" style={styles.page}>
+				<Text style={styles.title}>Complete Financial Report</Text>
+
+				{/* Basic Assumptions */}
+				<View
+					style={{ marginBottom: 10, padding: 8, backgroundColor: "#f3f4f6" }}>
+					<Text style={{ fontSize: 11, fontWeight: "bold", marginBottom: 4 }}>
+						Teacher Cost Calculation
+					</Text>
+					<View style={{ flexDirection: "row", gap: 15, fontSize: 9 }}>
+						<Text>Avg Salary Assumption: {avgsalaryassumption}</Text>
+						<Text>Working Days: {workingDays}</Text>
+						<Text>Teacher Cost Per Day: {teacherCostPerDay}</Text>
+					</View>
+				</View>
+
+				{/* Global Settings */}
+				<View
+					style={{ marginBottom: 10, padding: 8, backgroundColor: "#dbeafe" }}>
+					<Text style={{ fontSize: 11, fontWeight: "bold", marginBottom: 4 }}>
+						Global Settings (Apply to All Months)
+					</Text>
+					<View style={{ flexDirection: "row", gap: 15, fontSize: 9 }}>
+						<Text>
+							Number of Teachers: {monthlyData[months[0]]?.nrOfTeachers || 0}
+						</Text>
+						<Text>
+							Number of Students: {monthlyData[months[0]]?.nrOfStud || 0}
+						</Text>
+						<Text>
+							Rate per Student per Meeting:{" "}
+							{monthlyData[months[0]]?.ratePerStudPerMeeting || 0}
+						</Text>
+					</View>
+				</View>
+
+				{/* First Month One-time Costs */}
+				<View
+					style={{ marginBottom: 10, padding: 8, backgroundColor: "#fef3c7" }}>
+					<Text style={{ fontSize: 11, fontWeight: "bold", marginBottom: 4 }}>
+						First Month One-time Costs ({months[0]})
+					</Text>
+					<View style={{ flexDirection: "row", gap: 15, fontSize: 9 }}>
+						<Text>
+							Student Licenses: {monthlyData[months[0]]?.studLicenses || 0}
+						</Text>
+						<Text>
+							Child Safety Certifications:{" "}
+							{monthlyData[months[0]]?.childSafetyCert || 0}
+						</Text>
+					</View>
+				</View>
+
+				{/* Complete Monthly Data Table */}
+				<View style={{ marginBottom: 10 }}>
+					<Text style={{ fontSize: 11, fontWeight: "bold", marginBottom: 6 }}>
+						Complete Monthly Input Data
+					</Text>
+					<View style={styles.table}>
+						<View style={[styles.tableRow, styles.headerRow]}>
+							<Text style={[styles.tableCell, { flex: 1 }]}>Month</Text>
+							<Text style={[styles.tableCell, { flex: 0.8 }]}>Teachers</Text>
+							<Text style={[styles.tableCell, { flex: 0.8 }]}>Students</Text>
+							<Text style={[styles.tableCell, { flex: 0.8 }]}>Meetings</Text>
+							<Text style={[styles.tableCell, { flex: 0.9 }]}>Rate/Stud</Text>
+							<Text style={[styles.tableCell, { flex: 0.9 }]}>Transport</Text>
+							<Text style={[styles.tableCell, { flex: 1 }]}>Teacher Cost</Text>
+							<Text style={[styles.tableCell, { flex: 1 }]}>Stud Lic</Text>
+							<Text style={[styles.tableCell, { flex: 1 }]}>Child Safe</Text>
+						</View>
+						{months.map((month: Month) => (
+							<View key={month} style={styles.tableRow}>
+								<Text style={[styles.tableCell, { flex: 1 }]}>{month}</Text>
+								<Text style={[styles.tableCell, { flex: 0.8 }]}>
+									{monthlyData[month]?.nrOfTeachers || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 0.8 }]}>
+									{monthlyData[month]?.nrOfStud || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 0.8 }]}>
+									{monthlyData[month]?.nrOfMeetings || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 0.9 }]}>
+									{monthlyData[month]?.ratePerStudPerMeeting || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 0.9 }]}>
+									{monthlyData[month]?.transportCost || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 1 }]}>
+									{getTeacherCost(month)}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 1 }]}>
+									{monthlyData[month]?.studLicenses || 0}
+								</Text>
+								<Text style={[styles.tableCell, { flex: 1 }]}>
+									{monthlyData[month]?.childSafetyCert || 0}
+								</Text>
+							</View>
+						))}
+					</View>
+				</View>
+
+				{/* Financial Summary Table */}
+				<Text
+					style={{
+						fontSize: 11,
+						fontWeight: "bold",
+						marginBottom: 6,
+						marginTop: 8,
+					}}>
+					Financial Summary & Calculations
+				</Text>
+				<View style={styles.table}>
+					{/* Header */}
+					<View style={[styles.tableRow, styles.headerRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>
+							Metric / Month
+						</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{month}
+							</Text>
+						))}
+					</View>
+
+					{/* Monthly Revenue */}
+					<View style={[styles.tableRow, styles.greenRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>
+							Monthly Revenue
+						</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{getMonthlyRevenue(month)}
+							</Text>
+						))}
+					</View>
+
+					{/* Monthly Costs */}
+					<View style={[styles.tableRow, styles.redRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>
+							Monthly TOTAL Costs
+						</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{getAllCosts(month)}
+							</Text>
+						))}
+					</View>
+
+					{/* Monthly Profit/Loss */}
+					<View style={[styles.tableRow, styles.indigoRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>
+							Monthly Profit/Loss
+						</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{monthlyProfit_Loss(month)}
+							</Text>
+						))}
+					</View>
+
+					{/* Monthly Profitability % */}
+					<View style={[styles.tableRow, styles.purpleRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>
+							Monthly Profitability %
+						</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{getTotalMonthlyRevenue(month) === 0
+									? "0%"
+									: (
+											(monthlyProfit_Loss(month) /
+												getTotalMonthlyRevenue(month)) *
+											100
+									  ).toFixed(2) + "%"}
+							</Text>
+						))}
+					</View>
+
+					{/* Cashflow */}
+					<View style={[styles.tableRow, styles.indigoRow]}>
+						<Text style={[styles.tableCell, styles.firstCell]}>Cashflow</Text>
+						{months.map((month: Month) => (
+							<Text key={month} style={styles.tableCell}>
+								{cashFlow(month)}
+							</Text>
+						))}
+					</View>
+				</View>
+
+				{/* Summary */}
+				<View
+					style={{ marginTop: 20, padding: 10, backgroundColor: "#f3f4f6" }}>
+					<Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 10 }}>
+						Summary
+					</Text>
+					<Text>
+						Total Revenue:{" "}
+						{months
+							.reduce(
+								(sum: number, month: Month) =>
+									sum + getTotalMonthlyRevenue(month),
+								0
+							)
+							.toLocaleString()}
+					</Text>
+					<Text>
+						Total Costs:{" "}
+						{months
+							.reduce(
+								(sum: number, month: Month) => sum + getAllCosts(month),
+								0
+							)
+							.toLocaleString()}
+					</Text>
+					<Text>
+						Total Profit:{" "}
+						{months
+							.reduce(
+								(sum: number, month: Month) => sum + monthlyProfit_Loss(month),
+								0
+							)
+							.toLocaleString()}
+					</Text>
+				</View>
+			</Page>
+		</Document>
+	);
+
+	/*
+	months={months} 
+	getMonthlyRevenue={getMonthlyRevenue} 
+	getAllCosts={getAllCosts} 
+	monthlyProfit_Loss={monthlyProfit_Loss} 
+	getTotalMonthlyRevenue={getTotalMonthlyRevenue} 
+	cashFlow={cashFlow} 
+	avgsalaryassumption={avgsalaryassumption} 
+	workingDays={workingdays}
+	*/
+	const generatePDF = async () => {
+		// binarna zawartość PDF trzymana w RAM przeglądarki!
+		const blob = await pdf(
+			<MyDocument
+				months={months}
+				getMonthlyRevenue={getMonthlyRevenue}
+				getAllCosts={getAllCosts}
+				monthlyProfit_Loss={monthlyProfit_Loss}
+				getTotalMonthlyRevenue={getTotalMonthlyRevenue}
+				cashFlow={cashFlow}
+				avgsalaryassumption={avgsalaryassumption}
+				workingDays={workingdays}
+				// these below added
+				teacherCostPerDay={TeacherCostPerDay}
+				monthlyData={monthlyData}
+				getTeacherCost={getTeacherCost}
+			/>
+		).toBlob();
+
+		// debug: sprawdź czy to Blob
+		console.log("PDF blob:", blob);
+
+		// tworzenie linku do tej binarnej zawartości!
+		const url = URL.createObjectURL(blob);
+		// dodajemy link do dokumentu! ten link siedzi w pamieci js, nie w dom bo go nie dodalismy!
+		const link = document.createElement("a");
+		// ustalamy href na ten url, czyli jesli by ktos nacisnal na link to wiadomo zabiera go tam
+		link.href = url;
+		// dodatkowo download mowi ze rzeczy pod tym maja zostac zapisane na PC pod nazwa taka i rozszerzeniem .pdf
+		link.download = "financial-report.pdf";
+		// wywolujemy ten link
+		link.click();
+		// czyscimy
+		URL.revokeObjectURL(url); // Cleanup
+	};
+
 	return (
 		// minimalna wysokosc to ekran wiec 100vh
 		// MAIN DOCELOWO MA 100% SZEROKOSCI ELEMENT BLOKOWY!
@@ -539,17 +862,15 @@ export default function MainnnPage() {
 
 			{/* w tym divie elementy maja sie ukladac w kolumnie a przestrzen miedzy nimi oddalona o gap-6 */}
 			<div className="flex flex-col gap-6  ">
-				
 				{/* w tym divie karty ukladaja sie w rzedzie dzieki flex */}
 				{/* zajmuje on pelna szerokosc swojego rodzica czyli diva wyzej (osiagalne bez w-full bo div zawsze zajmuje 100% szerokosci rodzica)! */}
 				{/* flex wrap powoduje ze karty lamia sie do nowej linii gdy nie ma miejsca */}
 				{/* te dwie karty zawsze wysrodkowane */}
 				{/* warto pamietac tutaj, ze karty rozciagaja sie w stosunku do najwiekszej jesli jest flex wiec stretching nastepuje automatycznie! */}
 				<div className="flex  gap-5 flex-wrap justify-center">
-
 					{/* rzeczy w kartach sa ulozone za pomoca flexa, flex idzie jako kolumna */}
 					{/* szerokosc karty jest maksymalna, jednak nie wieksza niz lg, dodatkowo w sorku nalozony padding */}
-					
+
 					<Card className=" flex flex-col w-full p-10 max-w-lg">
 						<CardHeader className="px-0 pt-0">
 							<CardTitle className="text-2xl text-center">Basic Data</CardTitle>
@@ -601,7 +922,7 @@ export default function MainnnPage() {
 									<label className="block mb-1">Number of teachers</label>
 									<Input
 										type="text"
-										// BEZ VALUE, Jesli damy value tak konflikt interesow, zmiana z stringa na number, duza ilosc konwertowania niszczy tutaj mase rzeczy  	
+										// BEZ VALUE, Jesli damy value tak konflikt interesow, zmiana z stringa na number, duza ilosc konwertowania niszczy tutaj mase rzeczy
 
 										// value={
 										// 	monthlyData[firstMonth].nrOfTeachers == 0
@@ -768,7 +1089,6 @@ export default function MainnnPage() {
 				</div>
 				{/* turns out we dont have to add flex-col bcs card already have it xd */}
 
-			
 				<CalcOutput
 					months={months}
 					getMonthlyRevenue={getMonthlyRevenue}
@@ -776,9 +1096,9 @@ export default function MainnnPage() {
 					monthlyProfit_Loss={monthlyProfit_Loss}
 					getTotalMonthlyRevenue={getTotalMonthlyRevenue}
 					cashFlow={cashFlow}
+					generatePDF={generatePDF}
 				/>
 			</div>
-		
 		</main>
 	);
 }
@@ -790,6 +1110,7 @@ type CalcOutputProps = {
 	monthlyProfit_Loss: any;
 	getTotalMonthlyRevenue: any;
 	cashFlow: any;
+	generatePDF: any;
 };
 
 function CalcOutput({
@@ -799,15 +1120,23 @@ function CalcOutput({
 	monthlyProfit_Loss,
 	getTotalMonthlyRevenue,
 	cashFlow,
+	generatePDF,
 }: CalcOutputProps) {
 	return (
-		<Card >
+		<Card>
 			<CardHeader className="text-center">Calculations output</CardHeader>
 
+			{/* generates a PDF Report */}
+			<Button
+				onClick={generatePDF}
+				variant="outline"
+				className="mx-auto max-w-sm text-center bg-gray-500 dark:bg-amber-50 dark:text-black ">
+				📄 Download PDF Report
+			</Button>
+			{/* ! na koncu non null assertion! */}
 			<CardContent>
 				{/* pozwala na przewijanie tabeli poziomo gdy nie miesci sie na ekranie */}
 				<div className="overflow-x-auto ">
-
 					{/* tabela zajmuje pelna szerokosc karty dzieki w-full  */}
 					<table className="w-full text-sm  border-collapse">
 						<thead>
@@ -824,8 +1153,7 @@ function CalcOutput({
 						{/* cialo naszej tabeli */}
 						<tbody>
 							{/* tr to rząd */}
-							<tr className="border-b bg-green-50 dark:bg-green-900/20">
-
+							<tr className="border-b bg-green-300 dark:bg-green-900/20">
 								{/* td pojedyncza komorka w rzedzie */}
 								<td className="p-2 font-medium text-left">Monthly Revenue</td>
 
@@ -836,7 +1164,7 @@ function CalcOutput({
 								))}
 							</tr>
 
-							<tr className="border-b bg-red-50 dark:bg-red-900/20">
+							<tr className="border-b bg-red-300 dark:bg-red-900/20">
 								<td className="p-2 font-medium text-left">
 									Monthly TOTAL Costs
 								</td>
@@ -848,7 +1176,7 @@ function CalcOutput({
 								))}
 							</tr>
 
-							<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+							<tr className="border-b bg-indigo-300 dark:bg-indigo-900/20">
 								<td className="p-2 font-medium text-left">
 									Monthly Profit/Lost
 								</td>
@@ -860,7 +1188,7 @@ function CalcOutput({
 								))}
 							</tr>
 
-							<tr className="border-b bg-purple-50 dark:bg-purple-900/20">
+							<tr className="border-b bg-purple-300 dark:bg-purple-900/20">
 								<td className="p-2 font-medium text-left">
 									Monthly Profitability %{" "}
 								</td>
@@ -878,7 +1206,7 @@ function CalcOutput({
 								))}
 							</tr>
 
-							<tr className="border-b bg-indigo-50 dark:bg-indigo-900/20">
+							<tr className="border-b bg-indigo-300 dark:bg-indigo-900/20">
 								<td className="p-2 font-medium text-left"> Cashflow </td>
 
 								{months.map((month, index) => (
@@ -891,7 +1219,7 @@ function CalcOutput({
 					</table>
 				</div>
 
-				<div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+				<div className="mt-6 p-4 bg-gray-300 dark:bg-gray-800 rounded-lg">
 					<h4 className="font-bold mb-7 text-center">📊 Summary</h4>
 
 					{/* domyslnie 2 kolumny, od md przechodzimy na 4 */}
@@ -902,6 +1230,7 @@ function CalcOutput({
 							</div>
 							<div className="font-bold text-lg text-green-600">
 								{months
+									// reduce sums things into sum , and fires the fucntion with all the months
 									.reduce(
 										(sum, month) => sum + getTotalMonthlyRevenue(month),
 										0
